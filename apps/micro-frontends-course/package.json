@@ -1,5 +1,221 @@
 {
   "name": "@micro-frontends-course/micro-frontends-course",
   "version": "0.0.1",
-  "private": true
+  "private": true,
+  "nx": {
+    "projectType": "application",
+    "targets": {
+      "typecheck": {
+        "executor": "nx:run-commands",
+        "options": {
+          "cwd": "apps/micro-frontends-course",
+          "command": "tsc --build --emitDeclarationOnly"
+        },
+        "dependsOn": [
+          "^typecheck"
+        ],
+        "cache": true,
+        "inputs": [
+          "{projectRoot}/package.json",
+          "{workspaceRoot}/tsconfig.base.json",
+          "{projectRoot}/tsconfig.json",
+          "{projectRoot}/tsconfig.app.json",
+          "{projectRoot}/tsconfig.spec.json",
+          "{projectRoot}/src/**/*.js",
+          "{projectRoot}/src/**/*.jsx",
+          "{projectRoot}/src/**/*.ts",
+          "{projectRoot}/src/**/*.tsx",
+          "{projectRoot}/src/**/*.d.ts",
+          "!{projectRoot}/out-tsc",
+          "!{projectRoot}/dist",
+          "^production",
+          {
+            "externalDependencies": [
+              "typescript"
+            ]
+          }
+        ],
+        "outputs": [
+          "{projectRoot}/dist/**/*.d.ts",
+          "{projectRoot}/dist/**/*.d.ts.map",
+          "{projectRoot}/dist/tsconfig.app.tsbuildinfo"
+        ],
+        "syncGenerators": [
+          "@nx/js:typescript-sync"
+        ],
+        "metadata": {
+          "technologies": [
+            "typescript"
+          ],
+          "description": "Runs type-checking for the project.",
+          "help": {
+            "command": "npx tsc --build --help"
+          }
+        },
+        "parallelism": true
+      },
+      "build": {
+        "executor": "nx:run-commands",
+        "options": {
+          "cwd": "apps/micro-frontends-course",
+          "command": "rspack build",
+          "args": [
+            "--node-env=production"
+          ],
+          "env": {}
+        },
+        "dependsOn": [
+          "^build"
+        ],
+        "cache": true,
+        "inputs": [
+          "production",
+          "^production",
+          {
+            "externalDependencies": [
+              "@rspack/cli"
+            ]
+          }
+        ],
+        "outputs": [
+          "{workspaceRoot}/apps/micro-frontends-course/dist"
+        ],
+        "syncGenerators": [
+          "@nx/js:typescript-sync"
+        ],
+        "parallelism": true
+      },
+      "serve": {
+        "executor": "nx:run-commands",
+        "options": {
+          "cwd": "apps/micro-frontends-course",
+          "command": "rspack serve",
+          "args": [
+            "--node-env=development"
+          ],
+          "env": {}
+        },
+        "continuous": true,
+        "syncGenerators": [
+          "@nx/js:typescript-sync"
+        ],
+        "parallelism": true
+      },
+      "preview": {
+        "executor": "nx:run-commands",
+        "options": {
+          "cwd": "apps/micro-frontends-course",
+          "command": "rspack serve",
+          "args": [
+            "--node-env=production"
+          ],
+          "env": {}
+        },
+        "continuous": true,
+        "syncGenerators": [
+          "@nx/js:typescript-sync"
+        ],
+        "parallelism": true
+      },
+      "serve-static": {
+        "executor": "@nx/web:file-server",
+        "options": {
+          "buildTarget": "build",
+          "spa": true
+        },
+        "dependsOn": [
+          "build"
+        ],
+        "continuous": true,
+        "syncGenerators": [
+          "@nx/js:typescript-sync"
+        ],
+        "parallelism": true
+      },
+      "build-deps": {
+        "executor": "nx:noop",
+        "dependsOn": [
+          "^build"
+        ],
+        "parallelism": true
+      },
+      "watch-deps": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "npx nx watch --projects @micro-frontends-course/micro-frontends-course --includeDependentProjects -- npx nx build-deps @micro-frontends-course/micro-frontends-course"
+        },
+        "dependsOn": [
+          "build-deps"
+        ],
+        "continuous": true,
+        "parallelism": true
+      },
+      "lint": {
+        "executor": "nx:run-commands",
+        "options": {
+          "cwd": "apps/micro-frontends-course",
+          "command": "eslint ."
+        },
+        "cache": true,
+        "inputs": [
+          "default",
+          "^default",
+          "{workspaceRoot}/eslint.config.mjs",
+          "{workspaceRoot}/apps/micro-frontends-course/eslint.config.mjs",
+          {
+            "externalDependencies": [
+              "eslint"
+            ]
+          }
+        ],
+        "outputs": [
+          "{options.outputFile}"
+        ],
+        "metadata": {
+          "technologies": [
+            "eslint"
+          ],
+          "description": "Runs ESLint on project."
+        },
+        "parallelism": true
+      },
+      "test": {
+        "executor": "nx:run-commands",
+        "options": {
+          "cwd": "apps/micro-frontends-course",
+          "command": "jest",
+          "env": {
+            "TS_NODE_COMPILER_OPTIONS": "{\"moduleResolution\":\"node10\",\"module\":\"commonjs\"}"
+          }
+        },
+        "dependsOn": [
+          "^build"
+        ],
+        "cache": true,
+        "inputs": [
+          "default",
+          "^production",
+          "{workspaceRoot}/jest.preset.js",
+          {
+            "externalDependencies": [
+              "jest"
+            ]
+          }
+        ],
+        "outputs": [
+          "{projectRoot}/test-output/jest/coverage"
+        ],
+        "metadata": {
+          "technologies": [
+            "jest"
+          ],
+          "description": "Run Jest tests"
+        },
+        "parallelism": true
+      }
+    },
+    "tags": [
+      "npm:private"
+    ]
+  }
 }

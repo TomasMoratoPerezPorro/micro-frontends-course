@@ -1,0 +1,10 @@
+{
+  "name": "@micro-frontends-course/products-e2e",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "implicitDependencies": [
+      "@micro-frontends-course/products"
+    ]
+  }
+}

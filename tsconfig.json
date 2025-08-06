@@ -8,6 +8,12 @@
     },
     {
       "path": "./apps/micro-frontends-course"
+    },
+    {
+      "path": "./apps/products-e2e"
+    },
+    {
+      "path": "./apps/products"
     }
   ]
 }
